@@ -700,7 +700,7 @@ export async function searchTMDBLogos(query: string, apiKey?: string): Promise<T
     const results: TMDBLogoResult[] = [];
     for (const movie of movies) {
       const imagesResponse = await fetch(
-        `https://api.themoviedb.org/3/movie/${movie.id}/images?include_image_language=en,null&api_key=${apiKey}`
+        `https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=${apiKey}`
       );
       if (!imagesResponse.ok) continue;
       const imagesData = await imagesResponse.json();
