@@ -61,8 +61,7 @@ export const AlbumCard: React.FC<AlbumCardProps> = ({ album }) => {
           ))}
         </p>
 
-        <div className="flex items-center justify-between text-[11px] font-mono text-white/30 pt-0.5">
-          <span>{album.genre}</span>
+        <div className="text-[11px] font-mono text-white/30 pt-0.5">
           <span>{album.releaseYear}</span>
         </div>
       </div>

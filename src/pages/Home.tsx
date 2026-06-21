@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Sparkles, ChevronRight, Music, Disc, Users, AlertCircle } from 'lucide-react';
+import { Play, ChevronRight, Music, Disc, Users, AlertCircle } from 'lucide-react';
 import { RaagaDatabase } from '../services/db';
 import { CuratedSection, Song, Album, Artist } from '../types';
 import { SongCard } from '../components/SongCard';
@@ -91,11 +91,7 @@ export const Home: React.FC = () => {
             {/* Title Block */}
             <div className="flex-1 text-center md:text-left space-y-4">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#1DB954]/20 border border-[#1DB954]/30 text-[#1DB954] text-[10px] font-extrabold tracking-widest uppercase flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" /> Featured Discovery
-                </span>
-                <span className="text-white/40 text-xs font-mono">{featuredAlbum.genre}</span>
-                <span className="text-white/45 text-xs font-mono">• {featuredAlbum.releaseYear}</span>
+                <span className="text-white/45 text-xs font-mono">{featuredAlbum.releaseYear}</span>
               </div>
 
               {/* Title Logo representation (as requested by TMDB Logo requirements) */}
@@ -128,42 +124,33 @@ export const Home: React.FC = () => {
                 </p>
               </div>
 
-              {/* Info stats */}
-              <p className="text-white/40 text-xs sm:text-sm font-mono leading-relaxed">
-                Metadata catalog size: {featuredAlbum.trackIds.length} records mapped • Duration runtime: {featuredAlbum.runtime}
-              </p>
+
 
               {/* Streaming links bar */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-2">
                 <Link 
                   to={`/album/${featuredAlbum.id}`}
-                  className="px-6 py-2.5 rounded-full bg-[#1DB954] hover:bg-[#1ed760] text-black text-xs sm:text-sm font-bold shadow-lg shadow-[#1db954]/25 transition-all transform hover:scale-105 active:scale-95"
+                  className="px-5 py-2 rounded-full bg-[#1DB954] hover:bg-[#1ed760] text-black text-xs sm:text-sm font-bold shadow-lg shadow-[#1db954]/25 transition-all transform hover:scale-105 active:scale-95"
                 >
                   Explore Credits & Roster
                 </Link>
                 
-                {featuredAlbum.streamingLinks?.spotify && (
-                  <a 
-                    href={featuredAlbum.streamingLinks.spotify}
-                    target="_blank"
-                    rel="noreferrer referrerPolicy"
-                    className="p-2.5 rounded-full bg-[#121212]/80 border border-white/5 hover:border-white/15 text-white/80 hover:text-white transition-all transform hover:scale-105"
-                    title="Spotify Music Discovery Link"
-                  >
-                    <span className="text-xs font-semibold px-2">Spotify</span>
-                  </a>
-                )}
-                {featuredAlbum.streamingLinks?.appleMusic && (
-                  <a 
-                    href={featuredAlbum.streamingLinks.appleMusic}
+                {[
+                  { key: 'spotify', url: featuredAlbum.streamingLinks?.spotify, logo: '/Spotify_logo_without_text.svg.png', name: 'Spotify' },
+                  { key: 'appleMusic', url: featuredAlbum.streamingLinks?.appleMusic, logo: '/Apple_Music.png', name: 'Apple Music' },
+                ].filter(p => p.url).map(platform => (
+                  <a
+                    key={platform.key}
+                    href={platform.url!}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2.5 rounded-full bg-[#121212]/80 border border-white/5 hover:border-white/15 text-white/80 hover:text-white transition-all transform hover:scale-105"
-                    title="Apple Music Links"
+                    className="px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white/5 hover:bg-white/10"
+                    title={platform.name}
                   >
-                    <span className="text-xs font-semibold px-2">Apple</span>
+                    <img src={platform.logo} alt={platform.name} className="w-5 h-5 object-contain" />
+                    <span className="text-xs font-medium text-white/80">{platform.name}</span>
                   </a>
-                )}
+                ))}
               </div>
             </div>
 

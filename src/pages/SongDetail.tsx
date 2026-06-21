@@ -19,6 +19,7 @@ export const SongDetail: React.FC = () => {
   const [song, setSong] = useState<Song | null>(null);
   const [album, setAlbum] = useState<Album | null>(null);
   const [artist, setArtist] = useState<Artist | null>(null);
+  const [songArtists, setSongArtists] = useState<Artist[]>([]);
   
   // Cross relational collections
   const [sameAlbumSongs, setSameAlbumSongs] = useState<Song[]>([]);
@@ -50,7 +51,7 @@ export const SongDetail: React.FC = () => {
       setAlbum(null);
     }
 
-    // Fetch primary artist details
+    // Fetch all artist details
     const primaryArtistRef = currentSong.artists[0];
     if (primaryArtistRef) {
       const matchArtist = artists.find(ar => ar.id === primaryArtistRef.id);
@@ -58,6 +59,11 @@ export const SongDetail: React.FC = () => {
     } else {
       setArtist(null);
     }
+
+    const matchedArtists = currentSong.artists
+      .map(ref => artists.find(a => a.id === ref.id))
+      .filter((a): a is Artist => !!a);
+    setSongArtists(matchedArtists);
 
     // Related content 1: More songs in this album
     if (currentSong.albumId) {
@@ -214,52 +220,63 @@ export const SongDetail: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Tab buttons */}
-          <div className="flex border-b border-white/5 pb-2 ml-1 overflow-x-auto gap-4">
+          <div className="flex pb-2 ml-1 overflow-x-auto gap-4">
             <button 
               onClick={() => setActiveTab('credits')}
-              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors border-b shrink-0 ${activeTab === 'credits' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
+              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors shrink-0 ${activeTab === 'credits' ? 'text-[#1DB954]' : 'text-white/40 hover:text-white'}`}
             >
               Roster & Credits
             </button>
             <button 
               onClick={() => setActiveTab('video')}
-              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors border-b shrink-0 ${activeTab === 'video' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
+              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors shrink-0 ${activeTab === 'video' ? 'text-[#1DB954]' : 'text-white/40 hover:text-white'}`}
             >
               Video Feature
             </button>
           </div>
 
-          {/* TAB 1: IMMENSE ROSTER TABLE */}
+          {/* TAB 1: CREDITS GRID */}
           {activeTab === 'credits' && (
-            <div className="bg-[#121212] border border-white/5 rounded-2.5xl overflow-hidden">
-              <div className="p-4 bg-white/5 border-b border-white/5 font-mono text-xs text-white/50 font-bold uppercase tracking-wider">
+            <div className="bg-[#121212] rounded-3xl overflow-hidden">
+              <div className="p-4 bg-white/5 font-mono text-xs text-white/50 font-bold uppercase tracking-wider">
                 Roster & Production Credits
               </div>
-              <table className="w-full">
-                <tbody className="divide-y divide-white/5">
-                  {creditRows.length > 0 ? (
-                    creditRows.map(row => (
-                      <tr key={row.label} className="align-top hover:bg-white/5 transition-colors">
-                        <td className="p-4 w-1/3 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">{row.label}</td>
-                        <td className="p-4 text-sm font-semibold text-white">
-                          <div className="flex flex-wrap gap-2">
-                            {row.people.map((person, idx) => (
-                              <span key={`${row.label}-${person}-${idx}`} className={`bg-white/5 border border-white/5 rounded-lg px-2.5 py-1 transition-colors ${row.className}`}>
-                                {person}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td className="p-4 text-sm text-white/25 font-mono">No roster credits assigned.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              <div className="px-4 py-3 border-t border-white/5 flex flex-wrap gap-4 text-xs font-mono text-white/40">
+              {creditRows.length > 0 ? (
+                <div className="p-4 space-y-5">
+                  {creditRows.map(row => (
+                    <div key={row.label}>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 font-mono mb-2.5">{row.label}</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                        {row.people.map((person, idx) => {
+                          const matchedArtist = songArtists.find(a => a.name === person || a.name.toLowerCase() === person.toLowerCase());
+                          const card = (
+                            <div className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors">
+                              {matchedArtist?.image ? (
+                                <img src={matchedArtist.image} alt="" className="w-11 h-11 rounded-full object-cover shrink-0" />
+                              ) : (
+                                <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                                  <span className="text-lg font-bold text-white/30">{person[0]}</span>
+                                </div>
+                              )}
+                              <span className="text-sm font-bold text-white leading-tight truncate">{person}</span>
+                            </div>
+                          );
+                          return matchedArtist ? (
+                            <Link key={`${row.label}-${person}-${idx}`} to={`/artist/${matchedArtist.id}`} className="hover:bg-white/5 rounded-xl transition-colors">
+                              {card}
+                            </Link>
+                          ) : (
+                            <div key={`${row.label}-${person}-${idx}`}>{card}</div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-sm text-white/25 font-mono">No roster credits assigned.</div>
+              )}
+              <div className="px-4 py-3 flex flex-wrap gap-4 text-xs font-mono text-white/40">
                 <span>Duration: <span className="text-white/60 font-bold">{song.duration}</span></span>
                 <span>Release Date: <span className="text-white/60 font-bold">{song.releaseDate}</span></span>
               </div>
@@ -304,7 +321,7 @@ export const SongDetail: React.FC = () => {
           {artist && (
             <div className="p-5 bg-[#121212] border border-white/5 rounded-2.5xl space-y-3 shadow">
               <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#1DB954] font-mono">
-                Primary Conductor Profile
+                Composer
               </p>
               
               <div className="flex items-center gap-3">
@@ -317,7 +334,6 @@ export const SongDetail: React.FC = () => {
                   <h4 className="font-display font-extrabold text-sm text-white hover:text-[#1DB954] transition-colors leading-tight">
                     <Link to={`/artist/${artist.id}`}>{artist.name}</Link>
                   </h4>
-                  <p className="text-[10px] font-bold text-white/50 tracking-wide uppercase font-mono">{artist.primaryRole}</p>
                 </div>
               </div>
 

@@ -132,13 +132,15 @@ export const AlbumDetail: React.FC = () => {
             <div className="text-base sm:text-lg md:text-xl text-white/90 font-medium">
               by{' '}
               {album.artists.map((art, i) => (
-                <Link 
-                  key={art.id} 
-                  to={`/artist/${art.id}`} 
-                  className="text-white hover:text-[#1DB954] hover:underline transition-colors font-extrabold"
-                >
-                  {art.name}
-                </Link>
+                <span key={art.id}>
+                  <Link 
+                    to={`/artist/${art.id}`} 
+                    className="text-white hover:text-[#1DB954] hover:underline transition-colors font-extrabold"
+                  >
+                    {art.name}
+                  </Link>
+                  {i < album.artists.length - 1 && <span className="text-white/40 mx-1.5">&amp;</span>}
+                </span>
               ))}
             </div>
 
@@ -180,16 +182,16 @@ export const AlbumDetail: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Tab headers */}
-          <div className="flex border-b border-white/5 pb-2 ml-1 gap-4">
+          <div className="flex pb-2 ml-1 gap-4">
             <button 
               onClick={() => setActiveTab('tracks')}
-              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors border-b ${activeTab === 'tracks' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
+              className={`pb-2.5 font-display font-semibold text-base sm:text-lg transition-colors border-b ${activeTab === 'tracks' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
             >
               Track List ({songs.length})
             </button>
             <button 
               onClick={() => setActiveTab('credits')}
-              className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors border-b ${activeTab === 'credits' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
+              className={`pb-2.5 font-display font-semibold text-base sm:text-lg transition-colors border-b ${activeTab === 'credits' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
             >
               Album Credits
             </button>
@@ -197,14 +199,14 @@ export const AlbumDetail: React.FC = () => {
 
           {/* TAB 1: DYNAMIC INTERACTIVE TRACKLIST */}
           {activeTab === 'tracks' && (
-            <div className="bg-[#121212] border border-white/5 rounded-3xl p-3 sm:p-5 shadow">
+            <div className="bg-[#121212] rounded-3xl p-3 sm:p-5 shadow">
               <SpotifyTable songs={songs} />
             </div>
           )}
 
           {/* TAB 2: CREDITS */}
           {activeTab === 'credits' && (
-            <div className="bg-[#121212] border border-white/5 rounded-2.5xl p-6 space-y-5">
+            <div className="bg-[#121212] rounded-3xl p-6 space-y-5">
               <div className="flex items-center gap-2 text-white/40 text-xs font-bold font-mono uppercase tracking-wider">
                 <FileText className="w-4 h-4 text-[#1DB954]" /> Album Credits
               </div>
@@ -215,7 +217,7 @@ export const AlbumDetail: React.FC = () => {
                   new Map(allArtists.map(a => [a.id, a])).values()
                 );
                 return (
-                  <div className="divide-y divide-white/5 text-sm">
+                  <div className="text-sm">
                     <div className="py-3 sm:grid sm:grid-cols-3 gap-3">
                       <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8 block sm:inline">Album Artists: </span>
                       <span className="font-semibold text-white sm:col-span-2 leading-8 flex flex-wrap items-baseline">

@@ -129,7 +129,7 @@ export const ArtistDetail: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         
         {/* Tabs picker navigation */}
-        <div className="flex border-b border-white/5 pb-2 overflow-x-auto gap-4">
+        <div className="flex pb-2 overflow-x-auto gap-4">
           <button 
             onClick={() => setActiveTab('overview')}
             className={`pb-2.5 font-display font-extrabold text-base sm:text-lg transition-colors border-b shrink-0 ${activeTab === 'overview' ? 'text-[#1DB954] border-[#1DB954]' : 'text-white/40 border-transparent hover:text-white'}`}
@@ -182,7 +182,7 @@ export const ArtistDetail: React.FC = () => {
                         <Link to={`/song/${song.id}`} className="font-semibold text-white hover:text-[#1DB954] block truncate text-sm">
                           {song.name}
                         </Link>
-                        <p className="text-white/30 text-xs font-mono">{song.genre} • {song.releaseYear}</p>
+                        <p className="text-white/30 text-xs font-mono">{song.releaseYear}</p>
                       </div>
                       <span className="text-white/40 text-xs font-mono pr-2">{song.duration}</span>
                     </div>
