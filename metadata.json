@@ -1,0 +1,6 @@
+{
+  "name": "Raaga",
+  "description": "A beautiful, metadata-driven music discovery platform for exploring songs, albums, and artists, featuring iTunes imports, TMDB integration, and Spotify-inspired layouts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

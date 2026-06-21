@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Mona Sans", sans-serif;
+  --font-mono: "Mona Sans", ui-monospace, SFMono-Regular, monospace;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Custom scrollbars inspired by Spotify/Apple Music */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e3e;
+}
+
+/* Glassmorphism custom components */
+.backdrop-blur-glass {
+  backdrop-filter: blur(16px);
+  background-color: rgba(18, 18, 18, 0.7);
+}
+
+.spotify-gradient {
+  background: linear-gradient(180deg, rgba(29, 185, 84, 0.15) 0%, rgba(10, 10, 10, 0) 100%);
+}
+
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0) 0%, rgba(10, 10, 10, 0.8) 70%, #0a0a0a 100%);
+}
