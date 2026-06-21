@@ -90,14 +90,21 @@ export const SongDetail: React.FC = () => {
     );
   }
 
-  // Check presence of streaming variables
-  const streamingPlatforms = [
-    { name: 'Spotify', url: song.streamingLinks?.spotify, color: 'bg-[#1DB954] text-black hover:bg-[#1ed760]' },
-    { name: 'Apple Music', url: song.streamingLinks?.appleMusic, color: 'bg-[#FC3C44] text-white hover:bg-[#ff4e55]' },
-    { name: 'YouTube Music', url: song.streamingLinks?.youtubeMusic, color: 'bg-[#FF0000] text-white hover:bg-[#ff1a1a]' },
-    { name: 'YouTube Video', url: song.streamingLinks?.youtube, color: 'bg-[#FF0000] text-white hover:bg-[#cc0000] border border-red-600/30' },
-    { name: 'JioSaavn', url: song.streamingLinks?.jioSaavn || `https://www.jiosaavn.com/search/${encodeURIComponent(song.name)}`, color: 'bg-[#00d2c4] text-black hover:bg-[#00ebd9]' },
-    { name: 'Amazon Music', url: song.streamingLinks?.amazonMusic || `https://music.amazon.com/search/${encodeURIComponent(song.name)}`, color: 'bg-[#00A8E1] text-black hover:bg-[#00bfff]' }
+  const creditRows = [
+    { label: 'Singer / Vocalist', people: song.credits.singer ?? [], className: 'hover:border-[#1DB954] hover:text-[#1DB954]' },
+    { label: 'Composer / Arranger', people: song.credits.composer ?? [], className: 'hover:border-[#1DB954] hover:text-[#1DB954]' },
+    { label: 'Lyricist / Writer', people: song.credits.lyricist ?? [], className: 'hover:border-[#1DB954] hover:text-[#1DB954]' },
+    { label: 'Executive Producer', people: song.credits.producer ?? [], className: 'text-white/70' },
+    { label: 'Director / Conductor', people: song.credits.musicDirector ?? [], className: 'text-[#1DB954] font-bold' },
+  ].filter(row => row.people.length > 0);
+
+  const streamPlatforms = [
+    { name: 'Spotify', key: 'spotify', url: song.streamingLinks?.spotify, logo: '/Spotify_logo_without_text.svg.png' },
+    { name: 'Apple Music', key: 'appleMusic', url: song.streamingLinks?.appleMusic, logo: '/Apple_Music.png' },
+    { name: 'YouTube Music', key: 'youtubeMusic', url: song.streamingLinks?.youtubeMusic, logo: '/Youtube_Music.png' },
+    { name: 'YouTube', key: 'youtube', url: song.streamingLinks?.youtube, logo: '/Youtube_logo.png' },
+    { name: 'JioSaavn', key: 'jioSaavn', url: song.streamingLinks?.jioSaavn || `https://www.jiosaavn.com/search/${encodeURIComponent(song.name)}`, logo: '/jiosaavn.png' },
+    { name: 'Amazon Music', key: 'amazonMusic', url: song.streamingLinks?.amazonMusic || `https://music.amazon.com/search/${encodeURIComponent(song.name)}`, logo: '/Amazonmusic.png' }
   ];
 
   return (
@@ -136,18 +143,13 @@ export const SongDetail: React.FC = () => {
           {/* Particulars Card */}
           <div className="flex-1 text-center md:text-left space-y-4">
             
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/80 text-[10px] font-extrabold tracking-widest uppercase flex items-center gap-1 font-mono">
-                TRACK {song.trackNumber}
-              </span>
-              {song.explicit && (
+            {song.explicit && (
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-extrabold tracking-widest uppercase font-mono">
                   EXPLICIT
                 </span>
-              )}
-              <span className="text-white/40 text-xs font-mono">{song.genre}</span>
-              <span className="text-white/40 text-xs font-mono">• {song.language}</span>
-            </div>
+              </div>
+            )}
 
             <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-none">
               {song.name}
@@ -157,13 +159,15 @@ export const SongDetail: React.FC = () => {
             <div className="text-base sm:text-lg md:text-xl text-white/80 font-medium">
               by{' '}
               {song.artists.map((art, i) => (
-                <Link 
-                  key={art.id} 
-                  to={`/artist/${art.id}`} 
-                  className="text-white hover:text-[#1DB954] hover:underline font-bold transition-colors"
-                >
-                  {art.name}
-                </Link>
+                <span key={art.id}>
+                  <Link 
+                    to={`/artist/${art.id}`} 
+                    className="text-white hover:text-[#1DB954] hover:underline font-bold transition-colors"
+                  >
+                    {art.name}
+                  </Link>
+                  {i < song.artists.length - 1 && <span className="text-white/40 mx-1.5">&amp;</span>}
+                </span>
               ))}
             </div>
 
@@ -177,29 +181,22 @@ export const SongDetail: React.FC = () => {
               ) : (
                 <span className="text-white/60">Single Release</span>
               )}
-              <span>• Duration:</span> <span className="text-white/60">{song.duration}</span>
-              <span>• Release Date:</span> <span className="text-white/60">{song.releaseDate}</span>
             </p>
 
             {/* External Streaming Platform references */}
             <div className="pt-2">
-              <p className="text-[10px] sm:text-xs font-bold text-white/30 uppercase tracking-widest font-mono mb-2">
-                External Routing Directories (Metadata Only)
-              </p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                {streamingPlatforms.map((platform) => (
-                  <a 
-                    key={platform.name}
-                    href={platform.url || '#'}
+                {streamPlatforms.filter(p => p.url).map((platform) => (
+                  <a
+                    key={platform.key}
+                    href={platform.url}
                     target="_blank"
-                    rel="noreferrer referrerPolicy"
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${platform.color} ${!platform.url ? 'opacity-30 cursor-not-allowed' : ''}`}
-                    onClick={(e) => {
-                      if (!platform.url) e.preventDefault();
-                    }}
+                    rel="noreferrer"
+                    className="px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white/5 hover:bg-white/10"
+                    title={platform.name}
                   >
-                    <span>{platform.name}</span>
-                    {platform.url && <ExternalLink className="w-3 h-3" />}
+                    <img src={platform.logo} alt={platform.name} className="w-5 h-5 object-contain" />
+                    <span className="text-xs font-medium text-white/80">{platform.name}</span>
                   </a>
                 ))}
               </div>
@@ -240,92 +237,32 @@ export const SongDetail: React.FC = () => {
               </div>
               <table className="w-full">
                 <tbody className="divide-y divide-white/5">
-                  <tr className="align-top hover:bg-white/5 transition-colors">
-                    <td className="p-4 w-1/3 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">Singer / Vocalist</td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {song.credits.singer && song.credits.singer.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {song.credits.singer.map((s, idx) => (
-                            <span key={idx} className="bg-white/5 border border-white/5 hover:border-[#1DB954] rounded-lg px-2.5 py-1 transition-colors hover:text-[#1DB954]">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-white/20 font-mono">Uncredited Vocalist</span>
-                      )}
-                    </td>
-                  </tr>
-
-                  <tr className="align-top hover:bg-white/5 transition-colors">
-                    <td className="p-4 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">Composer / Arranger</td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {song.credits.composer && song.credits.composer.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {song.credits.composer.map((c, idx) => (
-                            <span key={idx} className="bg-white/5 border border-white/5 hover:border-[#1DB954] rounded-lg px-2.5 py-1 transition-colors hover:text-[#1DB954]">
-                              {c}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-white/20 font-mono">Instrumental / Traditional Composition</span>
-                      )}
-                    </td>
-                  </tr>
-
-                  <tr className="align-top hover:bg-white/5 transition-colors">
-                    <td className="p-4 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">Lyricist / Writer</td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {song.credits.lyricist && song.credits.lyricist.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {song.credits.lyricist.map((l, idx) => (
-                            <span key={idx} className="bg-white/5 border border-white/5 hover:border-[#1DB954] rounded-lg px-2.5 py-1 transition-colors hover:text-[#1DB954]">
-                              {l}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-white/20 font-mono">Not Annotated / Instrumental</span>
-                      )}
-                    </td>
-                  </tr>
-
-                  <tr className="align-top hover:bg-white/5 transition-colors">
-                    <td className="p-4 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">Executive Producer</td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {song.credits.producer && song.credits.producer.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {song.credits.producer.map((p, idx) => (
-                            <span key={idx} className="bg-white/5 border border-white/5 rounded-lg px-2.5 py-1 text-white/70">
-                              {p}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-white/20 font-mono">Standard Studio Production</span>
-                      )}
-                    </td>
-                  </tr>
-
-                  <tr className="align-top hover:bg-white/5 transition-colors">
-                    <td className="p-4 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">Director / Conductor</td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {song.credits.musicDirector && song.credits.musicDirector.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {song.credits.musicDirector.map((m, idx) => (
-                            <span key={idx} className="bg-white/5 border border-white/5 rounded-lg px-2.5 py-1 text-[#1DB954] font-bold">
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-white/20 font-mono">No music director credits</span>
-                      )}
-                    </td>
-                  </tr>
+                  {creditRows.length > 0 ? (
+                    creditRows.map(row => (
+                      <tr key={row.label} className="align-top hover:bg-white/5 transition-colors">
+                        <td className="p-4 w-1/3 text-xs font-bold uppercase tracking-wider text-white/40 font-mono">{row.label}</td>
+                        <td className="p-4 text-sm font-semibold text-white">
+                          <div className="flex flex-wrap gap-2">
+                            {row.people.map((person, idx) => (
+                              <span key={`${row.label}-${person}-${idx}`} className={`bg-white/5 border border-white/5 rounded-lg px-2.5 py-1 transition-colors ${row.className}`}>
+                                {person}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td className="p-4 text-sm text-white/25 font-mono">No roster credits assigned.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
+              <div className="px-4 py-3 border-t border-white/5 flex flex-wrap gap-4 text-xs font-mono text-white/40">
+                <span>Duration: <span className="text-white/60 font-bold">{song.duration}</span></span>
+                <span>Release Date: <span className="text-white/60 font-bold">{song.releaseDate}</span></span>
+              </div>
             </div>
           )}
 
@@ -414,7 +351,7 @@ export const SongDetail: React.FC = () => {
               <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
                 <Disc className="w-5 h-5 text-[#1DB954]" /> More Songs from Album
               </h3>
-              <div className="flex gap-4 overflow-x-auto pb-4 pt-1 scrollbar-thin">
+              <div className="flex gap-4 overflow-x-auto pb-4 pt-1 ">
                 {sameAlbumSongs.map(s => (
                   <div key={s.id} className="w-[185px] sm:w-[220px] shrink-0">
                     <SongCard song={s} />
@@ -430,7 +367,7 @@ export const SongDetail: React.FC = () => {
               <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
                 <User className="w-5 h-5 text-[#1DB954]" /> Other Discoveries by {artist?.name || 'Artist'}
               </h3>
-              <div className="flex gap-4 overflow-x-auto pb-4 pt-1 scrollbar-thin">
+              <div className="flex gap-4 overflow-x-auto pb-4 pt-1 ">
                 {sameArtistSongs.map(s => (
                   <div key={s.id} className="w-[185px] sm:w-[220px] shrink-0">
                     <SongCard song={s} />

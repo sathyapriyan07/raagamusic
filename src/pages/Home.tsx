@@ -199,8 +199,7 @@ export const Home: React.FC = () => {
 
               {/* Slider list */}
               <div 
-                className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10"
-                style={{ scrollbarWidth: 'thin' }}
+                className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x"
               >
                 {section.itemIds.map((itemRef) => renderCuratedItem(itemRef))}
               </div>

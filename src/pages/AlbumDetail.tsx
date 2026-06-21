@@ -4,7 +4,7 @@ import { RaagaDatabase } from '../services/db';
 import { Album, Song, Artist } from '../types';
 import { AlbumCard } from '../components/AlbumCard';
 import { SpotifyTable } from '../components/SpotifyTable';
-import { Disc, Clock, Calendar, ArrowLeft, ExternalLink, HelpCircle, Layers, FileText, Globe, Film } from 'lucide-react';
+import { Disc, Clock, Calendar, ArrowLeft, HelpCircle, Layers, FileText, Globe, Film } from 'lucide-react';
 
 function extractYoutubeId(url: string | undefined): string | null {
   if (!url) return null;
@@ -111,13 +111,7 @@ export const AlbumDetail: React.FC = () => {
           {/* Metadata particulars */}
           <div className="flex-1 text-center md:text-left space-y-4">
             
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/80 text-[10px] font-extrabold tracking-widest uppercase flex items-center gap-1 font-mono">
-                {album.type.toUpperCase()} RELEASE
-              </span>
-              <span className="text-white/40 text-xs font-mono">{album.genre}</span>
-              <span className="text-white/45 text-xs font-mono">• {album.language} Origin</span>
-            </div>
+
 
             {/* Support TMDB stylised album logo represented dynamically */}
             {album.logoUrl ? (
@@ -148,55 +142,29 @@ export const AlbumDetail: React.FC = () => {
               ))}
             </div>
 
-            {/* Brief list parameters */}
-            <p className="text-xs sm:text-sm text-white/40 font-mono">
-              Released: <span className="text-white/60">{album.releaseDate}</span> • Total Tracks: <span className="text-white/60">{songs.length} indexed</span> • Sum Duration: <span className="text-white/60">{totalDurationStr}</span>
-            </p>
-
             {/* Available Platform references */}
             <div className="pt-2">
-              <p className="text-[10px] sm:text-xs font-bold text-white/30 uppercase tracking-widest font-mono mb-2">
-                External Disc Repositories (Metadata Only)
-              </p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                {album.streamingLinks?.spotify && (
-                  <a 
-                    href={album.streamingLinks.spotify}
-                    target="_blank"
-                    rel="noreferrer referrerPolicy"
-                    className="px-3.5 py-1.5 rounded-lg bg-[#1DB954] text-black hover:bg-[#1ed760] text-xs font-bold transition-all flex items-center gap-1.5"
-                  >
-                    <span>Spotify LP</span> <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-                {album.streamingLinks?.appleMusic && (
-                  <a 
-                    href={album.streamingLinks.appleMusic}
+                {[
+                  { key: 'spotify', url: album.streamingLinks?.spotify, logo: '/Spotify_logo_without_text.svg.png', name: 'Spotify' },
+                  { key: 'appleMusic', url: album.streamingLinks?.appleMusic, logo: '/Apple_Music.png', name: 'Apple Music' },
+                  { key: 'youtubeMusic', url: album.streamingLinks?.youtubeMusic, logo: '/Youtube_Music.png', name: 'YouTube Music' },
+                  { key: 'youtube', url: album.streamingLinks?.youtube, logo: '/Youtube_logo.png', name: 'YouTube' },
+                  { key: 'jioSaavn', url: album.streamingLinks?.jioSaavn, logo: '/jiosaavn.png', name: 'JioSaavn' },
+                  { key: 'amazonMusic', url: album.streamingLinks?.amazonMusic, logo: '/Amazonmusic.png', name: 'Amazon Music' },
+                ].filter(p => p.url).map(platform => (
+                  <a
+                    key={platform.key}
+                    href={platform.url!}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3.5 py-1.5 rounded-lg bg-[#FC3C44] text-white hover:bg-[#ff4e55] text-xs font-bold transition-all flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all bg-white/5 hover:bg-white/10"
+                    title={platform.name}
                   >
-                    <span>Apple Music</span> <ExternalLink className="w-3.5 h-3.5" />
+                    <img src={platform.logo} alt={platform.name} className="w-5 h-5 object-contain" />
+                    <span className="text-xs font-medium text-white/80">{platform.name}</span>
                   </a>
-                )}
-                {album.streamingLinks?.youtube && (
-                  <a 
-                    href={album.streamingLinks.youtube}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3.5 py-1.5 rounded-lg bg-[#FF0000] text-white hover:bg-[#cc0000] text-xs font-bold transition-all flex items-center gap-1.5 border border-red-600/30"
-                  >
-                    <span>YouTube Video</span> <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-                <a 
-                  href={`https://music.youtube.com/search?q=${encodeURIComponent(album.name)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-3.5 py-1.5 rounded-lg bg-[#FF0000] text-white hover:bg-[#ff1b1b] text-xs font-bold transition-all flex items-center gap-1.5"
-                >
-                  <span>YT Music</span> <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                ))}
               </div>
             </div>
 
@@ -238,35 +206,51 @@ export const AlbumDetail: React.FC = () => {
           {activeTab === 'credits' && (
             <div className="bg-[#121212] border border-white/5 rounded-2.5xl p-6 space-y-5">
               <div className="flex items-center gap-2 text-white/40 text-xs font-bold font-mono uppercase tracking-wider">
-                <FileText className="w-4 h-4 text-[#1DB954]" /> Studio Staff and Engineers Listings
+                <FileText className="w-4 h-4 text-[#1DB954]" /> Album Credits
               </div>
-              
-              <div className="divide-y divide-white/5 text-sm">
-                <div className="py-3 sm:grid sm:grid-cols-3">
-                  <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8">Producer</span>
-                  <span className="font-semibold text-white sm:col-span-2 leading-8">
-                    {album.credits?.producer?.join(', ') || artist?.name || 'Studio Production'}
-                  </span>
-                </div>
-                <div className="py-3 sm:grid sm:grid-cols-3">
-                  <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8">Primary Composers</span>
-                  <span className="font-semibold text-white sm:col-span-2 leading-8">
-                    {album.credits?.composers?.join(', ') || artist?.name || 'Traditional Composer Score'}
-                  </span>
-                </div>
-                <div className="py-3 sm:grid sm:grid-cols-3">
-                  <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8">Mixing & Mastering Staff</span>
-                  <span className="font-semibold text-white sm:col-span-2 leading-8">
-                    {album.credits?.engineers?.join(', ') || 'Naveen Kumar, P.A. Deepak, Leslie Fernandes'}
-                  </span>
-                </div>
-                <div className="py-3 sm:grid sm:grid-cols-3">
-                  <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8">Recording Network</span>
-                  <span className="font-semibold text-white sm:col-span-2 leading-8">
-                    KM Music Conservatory Studios, Panchathan Record Inn (Chennai, TN)
-                  </span>
-                </div>
-              </div>
+
+              {(() => {
+                const allArtists: { id: string; name: string }[] = songs.flatMap(s => s.artists);
+                const songArtists = Array.from(
+                  new Map(allArtists.map(a => [a.id, a])).values()
+                );
+                return (
+                  <div className="divide-y divide-white/5 text-sm">
+                    <div className="py-3 sm:grid sm:grid-cols-3 gap-3">
+                      <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8 block sm:inline">Album Artists: </span>
+                      <span className="font-semibold text-white sm:col-span-2 leading-8 flex flex-wrap items-baseline">
+                        {album.artists.map((a, i) => (
+                          <React.Fragment key={a.id}>
+                            <Link to={`/artist/${a.id}`} className="text-white hover:text-[#1DB954] hover:underline">{a.name}</Link>
+                            {i < album.artists.length - 1 ? <span className="mx-1.5 text-white/30">/</span> : ''}
+                          </React.Fragment>
+                        ))}
+                      </span>
+                    </div>
+                    <div className="py-3 sm:grid sm:grid-cols-3 gap-3">
+                      <span className="font-mono text-white/45 uppercase text-xs font-bold leading-8 block sm:inline">Featured Artists: </span>
+                      <span className="font-semibold text-white/70 sm:col-span-2 leading-8 flex flex-wrap items-baseline">
+                        {songArtists
+                          .filter(a => !album.artists.some(aa => aa.id === a.id))
+                          .map((a, i, arr) => (
+                            <React.Fragment key={a.id}>
+                              <Link to={`/artist/${a.id}`} className="text-white/70 hover:text-[#1DB954] hover:underline">{a.name}</Link>
+                              {i < arr.length - 1 ? <span className="mx-1.5 text-white/30">/</span> : ''}
+                            </React.Fragment>
+                          ))}
+                        {songArtists.filter(a => !album.artists.some(aa => aa.id === a.id)).length === 0 && (
+                          <span className="text-white/30">Same as album artists</span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="py-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono text-white/40">
+                      <span>Released: <span className="text-white/60 font-semibold">{album.releaseDate}</span></span>
+                      <span>Total Tracks: <span className="text-white/60 font-semibold">{songs.length}</span></span>
+                      <span>Duration: <span className="text-white/60 font-semibold">{totalDurationStr}</span></span>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -306,9 +290,6 @@ export const AlbumDetail: React.FC = () => {
                 alt={artist.name} 
                 className="w-16 h-16 rounded-full object-cover border border-white/10"
               />
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#1DB954] font-mono leading-tight">
-                COMPOSER SPOTLIGHT biography
-              </p>
               
               <h4 className="font-display font-extrabold text-[#1DB954] text-base hover:underline">
                 <Link to={`/artist/${artist.id}`}>{artist.name}</Link>
@@ -339,7 +320,7 @@ export const AlbumDetail: React.FC = () => {
             <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
               <Disc className="w-5 h-5 text-[#1DB954]" /> More Albums from {artist?.name || 'Artist'}
             </h3>
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 scrollbar-thin">
+            <div className="flex gap-4 overflow-x-auto pb-4 pt-1 ">
               {relatedAlbums.map(al => (
                 <div key={al.id} className="w-[185px] sm:w-[220px] shrink-0">
                   <AlbumCard album={al} />

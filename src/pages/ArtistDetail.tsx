@@ -6,7 +6,7 @@ import { SongCard } from '../components/SongCard';
 import { AlbumCard } from '../components/AlbumCard';
 import { ArtistCard } from '../components/ArtistCard';
 import { SpotifyTable } from '../components/SpotifyTable';
-import { Users, Disc, Music, UserCheck, AlertCircle, ArrowLeft, Heart, Sparkles, BookOpen, Layers } from 'lucide-react';
+import { Users, Disc, Music, UserCheck, AlertCircle, ArrowLeft, Heart, BookOpen, Layers } from 'lucide-react';
 
 export const ArtistDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -98,25 +98,9 @@ export const ArtistDetail: React.FC = () => {
           </div>
 
           <div className="space-y-2 mt-4 sm:mt-0">
-            {/* Roles pills list */}
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1 p-0.5">
-              {artist.roles.map((r, i) => (
-                <span 
-                  key={i} 
-                  className="px-2 py-0.5 rounded-md bg-[#1DB954]/20 border border-[#1DB954]/30 text-[#1DB954] text-[9px] font-bold uppercase tracking-wider font-mono"
-                >
-                  {r}
-                </span>
-              ))}
-            </div>
-
             <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-none drop-shadow-md">
               {artist.name}
             </h1>
-
-            <p className="text-white/60 text-xs sm:text-sm font-mono max-w-xl">
-              Roles: <span className="text-white">{artist.primaryRole}</span> • Verification Status: <span className="text-[#1DB954] font-bold">✓ Verified Roster</span>
-            </p>
           </div>
 
         </div>
@@ -136,16 +120,6 @@ export const ArtistDetail: React.FC = () => {
               <p className="text-white/40 text-[10px] font-bold font-mono uppercase tracking-widest leading-none">Cataloged Albums</p>
               <p className="text-xl sm:text-2xl font-display font-extrabold text-white">{albums.length}</p>
             </div>
-            <div className="space-y-0.5">
-              <p className="text-white/40 text-[10px] font-bold font-mono uppercase tracking-widest leading-none">Collaborators</p>
-              <p className="text-xl sm:text-2xl font-display font-extrabold text-white">4 Mapped</p>
-            </div>
-          </div>
-
-          <div className="flex gap-2 shrink-0">
-            <button className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs sm:text-sm border border-white/5 flex items-center gap-1.5 transition-all">
-              <Sparkles className="w-4 h-4 text-[#1DB954]" /> Share Portfolio
-            </button>
           </div>
 
         </div>
@@ -186,6 +160,9 @@ export const ArtistDetail: React.FC = () => {
               </h3>
               <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line font-normal">
                 {artist.bio}
+              </p>
+              <p className="text-[11px] font-mono text-white/40">
+                Primary Role: <span className="text-[#1DB954] font-bold">{artist.primaryRole}</span>
               </p>
             </div>
 
@@ -250,7 +227,7 @@ export const ArtistDetail: React.FC = () => {
           <h3 className="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight flex items-center gap-2">
             <Users className="w-5 h-5 text-[#1DB954]" /> Related Artists (Fans Also Discover)
           </h3>
-          <div className="flex gap-4 overflow-x-auto pb-4 pt-1 scrollbar-thin">
+          <div className="flex gap-4 overflow-x-auto pb-4 pt-1 ">
             {relatedArtists.map(art => (
               <div key={art.id} className="w-[185px] sm:w-[220px] shrink-0">
                 <ArtistCard artist={art} />

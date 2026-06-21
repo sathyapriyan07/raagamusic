@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Disc, Sparkles } from 'lucide-react';
+import { Disc } from 'lucide-react';
 import { Album } from '../types';
 
 interface AlbumCardProps {
@@ -29,14 +29,8 @@ export const AlbumCard: React.FC<AlbumCardProps> = ({ album }) => {
           loading="lazy"
         />
 
-        {/* Dynamic Badge for TMDB integrations / title logos */}
-        {album.logoUrl && (
-          <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-[#1DB954]/90 text-black text-[9px] font-bold flex items-center gap-1 shadow">
-            <Sparkles className="w-3 h-3 text-black fill-current" />
-            Logo Sync’d
-          </div>
-        )}
 
+        
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
           <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center translate-y-3 group-hover:translate-y-0 transition-all duration-350 shadow-xl shadow-black/45">
             <Disc className="w-5 h-5 text-black animate-spin-slow stroke-[2]" />
